@@ -18,6 +18,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var useBrowserName = reporterConfig.useBrowserName
   var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
+  var prefixTestReport = reporterConfig.prefixTestReport || 'TESTS'
   var properties = reporterConfig.properties
 
   var suites
@@ -65,6 +66,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   var writeXmlForBrowser = function (browser) {
     var safeBrowserName = browser.name.replace(/ /g, '_')
+    // remove parenthsis from browser name
+    safeBrowserName = safeBrowserName.replace(/\(|\)/g, '')
+
     var newOutputFile
     if (outputFile && pathIsAbsolute(outputFile)) {
       newOutputFile = outputFile
@@ -73,9 +77,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
                                : outputDir
       newOutputFile = path.join(dir, outputFile)
     } else if (useBrowserName) {
-      newOutputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
+      newOutputFile = path.join(outputDir, prefixTestReport + '-' + safeBrowserName + '.xml')
     } else {
-      newOutputFile = path.join(outputDir, 'TESTS.xml')
+      newOutputFile = path.join(outputDir, prefixTestReport + '.xml')
     }
 
     var xmlToOutput = suites[browser.id]
